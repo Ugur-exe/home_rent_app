@@ -87,10 +87,11 @@ class _destinationScreenState extends State<destinationScreen> {
                           child: Center(
                             child: IconButton(
                                 onPressed: () async {
+                                  String id = widget.Popular.getId();
                                   final SharedPreferences prefs =
                                       await SharedPreferences.getInstance();
                                   await prefs.setStringList("homeId",
-                                      <String>[widget.Popular.getId()]);
+                                      <String>[id.toString()]);
                                   final List<String>? homeId =
                                       prefs.getStringList("homeId");
                                   print(homeId);

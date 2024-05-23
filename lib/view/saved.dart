@@ -31,7 +31,33 @@ class _SavedState extends State<Saved> {
         return ListTile(
           title: Text(savedHouses[index]),
           onTap: () {
-
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Remove from saved'),
+                  content: Text('Do you want to remove ${savedHouses[index]} from saved?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        savedHouses.removeAt(index);
+                        prefs.setStringList('savedHouses', savedHouses);
+                        loadSavedHouses();
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Remove'),
+                    ),
+                  ],
+                );
+              },
+            );
           },
         );
       },
