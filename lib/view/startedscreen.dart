@@ -28,9 +28,18 @@ class _StartedScreenState extends State<StartedScreen> {
   checkLogin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool? loginState = prefs.getBool('login');
+    String? email = prefs.getString('email');
+    String? password = prefs.getString('password');
+    FirebaseAuth auth = FirebaseAuth.instance;
     if (loginState == true) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const BottomNavi()));
+      await auth
+          .signInWithEmailAndPassword(email: email!, password: password!)
+          .then((value) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const BottomNavi()));
+      }).catchError((e) {
+        prefs.setBool('login', false);
+      });
     }
   }
 

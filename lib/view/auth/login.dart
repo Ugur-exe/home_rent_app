@@ -108,8 +108,11 @@ class _LoginWithEmailState extends State<LoginWithEmail> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => const BottomNavi()));
-                    SharedPreferences.getInstance().then((loginState) =>
-                        loginState.setBool('login', true));
+                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    prefs.setBool("login",true);
+                    prefs.setString("email", emailController.text);
+                    prefs.setString("passwd", passwdController.text);
+                    
                   } on FirebaseAuthException catch (e) {
                     if (e.code == 'invalid-credential') {
                       toastification.show(
