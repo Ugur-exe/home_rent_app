@@ -9,6 +9,7 @@ import 'package:home_rent/utils/login_option.dart';
 import 'package:home_rent/view/auth/login.dart';
 import 'package:home_rent/view/bottomnavi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toastification/toastification.dart';
 
 class StartedScreen extends StatefulWidget {
   const StartedScreen({super.key});
@@ -29,7 +30,7 @@ class _StartedScreenState extends State<StartedScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool? loginState = prefs.getBool('login');
     String? email = prefs.getString('email');
-    String? password = prefs.getString('password');
+    String? password = prefs.getString('passwd');
     FirebaseAuth auth = FirebaseAuth.instance;
     if (loginState == true) {
       await auth
@@ -37,6 +38,14 @@ class _StartedScreenState extends State<StartedScreen> {
           .then((value) {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => const BottomNavi()));
+        toastification.show(
+                        context: context,
+                        type: ToastificationType.success,
+                        title: const Text('Success'),
+                        description: const Text.rich(
+                            TextSpan(text: 'Autologin Successful!!')),
+                        autoCloseDuration: const Duration(seconds: 4),
+                        icon: const Icon(Icons.check));
       }).catchError((e) {
         prefs.setBool('login', false);
       });
