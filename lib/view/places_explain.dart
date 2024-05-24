@@ -1,8 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:home_rent/utils/button.dart';
 import 'package:home_rent/utils/color.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class DestinationScreen extends StatefulWidget {
   final Popular;
@@ -85,10 +85,15 @@ class _DestinationScreenState extends State<DestinationScreen> {
                           child: Center(
                             child: IconButton(
                                 onPressed: () async {
-                                  final SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  prefs.setStringList("savedHousesID", [widget.Popular.id.toString()]);
-                                  print(prefs.getStringList("savedHousesID")!);
+                                  FirebaseFirestore firestore = FirebaseFirestore.instance;
+                                  await firestore.collection('savedHomes').doc(widget.Popular.id.toString()).set({
+                                    'imageUrl': widget.Popular.imageUrl,
+                                    'city': widget.Popular.city,
+                                    'country': widget.Popular.country,
+                                    'description': widget.Popular.description,
+                                    'rating': widget.Popular.rating,
+                                    'prices': widget.Popular.prices,
+                                  });
                                 },
                                 icon: const FaIcon(
                                   FontAwesomeIcons.star,

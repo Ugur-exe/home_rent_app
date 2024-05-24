@@ -1,8 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:home_rent/utils/color.dart';
 import 'package:home_rent/view/places_explain.dart';
 import 'package:home_rent/viewmodel/home_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Saved extends StatefulWidget {
   const Saved({super.key});
@@ -12,13 +12,9 @@ class Saved extends StatefulWidget {
 }
 
 class _SavedState extends State<Saved> {
-  List<String> savedHousesID = [];
-  List<String> savedHousesCity = [];
-  List<String> savedHousesCountry = [];
-  List<String> savedHousesDescription = [];
-  List<String> savedHousesRating = [];
-  List<String> savedHousesPrices = [];
-  List<String> savedHousesImageUrl = [];
+  final Map<String, dynamic> savedHouses = {};
+  
+  
   @override
   void initState() {
     super.initState();
@@ -26,15 +22,13 @@ class _SavedState extends State<Saved> {
   }
 
   void loadSavedHouses() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    var savedHomes = await firestore.collection('savedHomes').get();
     setState(() {
-      savedHousesID = prefs.getStringList('savedHouses') ?? [];
-      savedHousesCity = prefs.getStringList('savedHousesCity') ?? [];
-      savedHousesCountry = prefs.getStringList('savedHousesCountry') ?? [];
-      savedHousesDescription = prefs.getStringList('savedHousesDescription') ?? [];
-      savedHousesRating = prefs.getStringList('savedHousesRating') ?? [];
-      savedHousesPrices = prefs.getStringList('savedHousesPrices') ?? [];
-      savedHousesImageUrl = prefs.getStringList('savedHousesImage') ?? [];
+      savedHomes.docs.forEach((element) {
+        savedHouses[element.id] = element.data();
+        print(savedHouses);
+      });
     });
   }
 
@@ -45,11 +39,11 @@ class _SavedState extends State<Saved> {
       children: [
         // container for pictures
         SizedBox(
-          height: 300.0,
+          height: MediaQuery.of(context).size.height-MediaQuery.of(context).padding.top-MediaQuery.of(context).padding.bottom-39,
           //color: Colors.blue,
           child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: savedHousesCity.length,
+            scrollDirection: Axis.vertical,
+            itemCount: savedHouses.length,
             itemBuilder: (BuildContext context, int id) {
               Popular populars = destinations[id];
               return GestureDetector(
@@ -61,7 +55,7 @@ class _SavedState extends State<Saved> {
                 ),
                 child: Container(
                   margin: const EdgeInsets.only(right: 15),
-                  width: 230,
+                  width: 230.0,
                   //color: Colors.red,
                   child: Stack(
                     alignment: Alignment.topCenter,
@@ -81,7 +75,7 @@ class _SavedState extends State<Saved> {
                                 height: 210,
                               ),
                               Text(
-                                savedHousesCity[id],
+                                savedHouses['city'].toString(),
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 16.0,
@@ -93,7 +87,7 @@ class _SavedState extends State<Saved> {
                                 height: 5,
                               ),
                               Text(
-                                savedHousesDescription[id],
+                                savedHouses['description'].toString(),
                                 style: const TextStyle(
                                   color: Colors.black45,
                                   fontSize: 8.0,
@@ -112,7 +106,7 @@ class _SavedState extends State<Saved> {
                                   ),
                                   const SizedBox(width: 5.0),
                                   Text(
-                                    savedHousesRating[id],
+                                    savedHouses['rating'].toString(),
                                     style: const TextStyle(
                                       fontSize: 10.0,
                                       color: Colors.black45,
@@ -132,7 +126,7 @@ class _SavedState extends State<Saved> {
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Hero(
                           // for animation of image to next screen
-                          tag: savedHousesImageUrl[id],
+                          tag: savedHouses['imageUrl'].toString(),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20.0),
                             child: Padding(
@@ -142,7 +136,7 @@ class _SavedState extends State<Saved> {
                                 child: Image(
                                   height: 160.0,
                                   width: 180.0,
-                                  image: AssetImage(populars.imageUrl),
+                                  image: AssetImage(savedHouses['imageUrl'].toString()),
                                   fit: BoxFit.cover,
                                 ),
                               ),
