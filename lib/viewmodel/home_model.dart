@@ -18,6 +18,12 @@ class Popular {
     required this.prices,
   });
   int get getId => id;
+  String get getImageUrl => imageUrl;
+  String get getCity => city;
+  String get getCountry => country;
+  String get getDescription => description;
+  String get getRating => rating;
+  String get getPrices => prices;
 }
 
 //destination data

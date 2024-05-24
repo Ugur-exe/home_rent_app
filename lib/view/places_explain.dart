@@ -4,17 +4,15 @@ import 'package:home_rent/utils/button.dart';
 import 'package:home_rent/utils/color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class destinationScreen extends StatefulWidget {
+class DestinationScreen extends StatefulWidget {
   final Popular;
   //method
-  const destinationScreen({super.key, required this.Popular});
+  const DestinationScreen({super.key, required this.Popular});
   @override
-  State<destinationScreen> createState() => _destinationScreenState(Popular);
+  State<DestinationScreen> createState() => _DestinationScreenState();
 }
 
-class _destinationScreenState extends State<destinationScreen> {
-  _destinationScreenState(popular);
-
+class _DestinationScreenState extends State<DestinationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,14 +85,10 @@ class _destinationScreenState extends State<destinationScreen> {
                           child: Center(
                             child: IconButton(
                                 onPressed: () async {
-                                  String id = widget.Popular.getId();
                                   final SharedPreferences prefs =
                                       await SharedPreferences.getInstance();
-                                  await prefs.setStringList("homeId",
-                                      <String>[id.toString()]);
-                                  final List<String>? homeId =
-                                      prefs.getStringList("homeId");
-                                  print(homeId);
+                                  prefs.setStringList("savedHousesID", [widget.Popular.id.toString()]);
+                                  print(prefs.getStringList("savedHousesID")!);
                                 },
                                 icon: const FaIcon(
                                   FontAwesomeIcons.star,

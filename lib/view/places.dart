@@ -24,7 +24,7 @@ class DestinationCarousel extends StatelessWidget {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => destinationScreen(Popular: populars),
+                    builder: (_) => DestinationScreen(Popular: populars),
                   ),
                 ),
                 child: Container(
