@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:home_rent/utils/button.dart';
@@ -85,14 +86,21 @@ class _DestinationScreenState extends State<DestinationScreen> {
                           child: Center(
                             child: IconButton(
                                 onPressed: () async {
-                                  FirebaseFirestore firestore = FirebaseFirestore.instance;
-                                  await firestore.collection('savedHomes').doc(widget.Popular.id.toString()).set({
+                                  final Map<String, dynamic> variables = {
                                     'imageUrl': widget.Popular.imageUrl,
                                     'city': widget.Popular.city,
                                     'country': widget.Popular.country,
                                     'description': widget.Popular.description,
                                     'rating': widget.Popular.rating,
                                     'prices': widget.Popular.prices,
+                                  };
+                                  DocumentReference collections =
+                                      await FirebaseFirestore.instance
+                                          .collection('user_fav')
+                                          .doc(FirebaseAuth
+                                              .instance.currentUser!.uid);
+                                  collections.update({
+                                    '${widget.Popular.id}' : FieldValue.arrayUnion([variables])
                                   });
                                 },
                                 icon: const FaIcon(

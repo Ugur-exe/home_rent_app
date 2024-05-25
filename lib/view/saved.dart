@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:home_rent/utils/color.dart';
 import 'package:home_rent/view/places_explain.dart';
@@ -12,9 +13,8 @@ class Saved extends StatefulWidget {
 }
 
 class _SavedState extends State<Saved> {
-  final Map<String, dynamic> savedHouses = {};
-  
-  
+  Map<String, dynamic> savedHouses = {};
+  List<String> saved = [];
   @override
   void initState() {
     super.initState();
@@ -22,24 +22,44 @@ class _SavedState extends State<Saved> {
   }
 
   void loadSavedHouses() async {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    var savedHomes = await firestore.collection('savedHomes').get();
-    setState(() {
-      savedHomes.docs.forEach((element) {
-        savedHouses[element.id] = element.data();
-        print(savedHouses);
-      });
+    final Map<String, dynamic> favs = {};
+    DocumentReference collections = await FirebaseFirestore.instance
+        .collection('user_fav')
+        .doc(FirebaseAuth.instance.currentUser!.uid);
+    collections.get().then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        favs.addAll(documentSnapshot.data() as Map<String, dynamic>);
+        print(favs);
+        favs.forEach((key, value) {
+          savedHouses[key] = value;
+        });
+        setState(() {
+          saved = savedHouses.keys.toList();
+        });
+      }
     });
+
+    // setState(() {
+    //   savedHomes.forEach((element) {
+    //     savedHouses[element.id] = element.data() as Map<String, dynamic>;
+    //     // print(savedHouses[element.id]);
+    //   });
+    //   saved = savedHouses.keys.toList();
+    //   print(saved);
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
+    double top = MediaQuery.of(context).padding.top;
+    double bottom = MediaQuery.of(context).padding.bottom;
+
     return Column(
       //destination text
       children: [
         // container for pictures
         SizedBox(
-          height: MediaQuery.of(context).size.height-MediaQuery.of(context).padding.top-MediaQuery.of(context).padding.bottom-39,
+          height: MediaQuery.of(context).size.height - top - bottom - 39,
           //color: Colors.blue,
           child: ListView.builder(
             scrollDirection: Axis.vertical,
@@ -56,7 +76,6 @@ class _SavedState extends State<Saved> {
                 child: Container(
                   margin: const EdgeInsets.only(right: 15),
                   width: 230.0,
-                  //color: Colors.red,
                   child: Stack(
                     alignment: Alignment.topCenter,
                     children: [
@@ -75,7 +94,7 @@ class _SavedState extends State<Saved> {
                                 height: 210,
                               ),
                               Text(
-                                savedHouses['city'].toString(),
+                                populars.city,
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 16.0,
@@ -87,7 +106,7 @@ class _SavedState extends State<Saved> {
                                 height: 5,
                               ),
                               Text(
-                                savedHouses['description'].toString(),
+                                populars.description,
                                 style: const TextStyle(
                                   color: Colors.black45,
                                   fontSize: 8.0,
@@ -106,7 +125,7 @@ class _SavedState extends State<Saved> {
                                   ),
                                   const SizedBox(width: 5.0),
                                   Text(
-                                    savedHouses['rating'].toString(),
+                                    populars.rating,
                                     style: const TextStyle(
                                       fontSize: 10.0,
                                       color: Colors.black45,
@@ -126,7 +145,7 @@ class _SavedState extends State<Saved> {
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Hero(
                           // for animation of image to next screen
-                          tag: savedHouses['imageUrl'].toString(),
+                          tag: populars.imageUrl,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20.0),
                             child: Padding(
@@ -136,7 +155,7 @@ class _SavedState extends State<Saved> {
                                 child: Image(
                                   height: 160.0,
                                   width: 180.0,
-                                  image: AssetImage(savedHouses['imageUrl'].toString()),
+                                  image: AssetImage(populars.imageUrl),
                                   fit: BoxFit.cover,
                                 ),
                               ),

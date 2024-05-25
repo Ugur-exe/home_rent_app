@@ -29,7 +29,7 @@ class Popular {
 //destination data
 List<Popular> destinations = [
   Popular(
-    id: 1,
+    id: 0,
     imageUrl: 'assets/property11.jpg',
     city: '3BHK Villa, 1400 Sqft',
     country: 'The USA',
@@ -39,7 +39,7 @@ List<Popular> destinations = [
     prices: "25000 USD / per month\n+100000 USD Deposit",
   ),
   Popular(
-    id: 2,
+    id: 1,
     imageUrl: 'assets/property5.jpg',
     city: 'Abbot, 1500  Sqft',
     country: 'Hazara',
@@ -49,7 +49,7 @@ List<Popular> destinations = [
     prices: 'Rs 15000 / per month\n+50000 Deposit',
   ),
   Popular(
-    id: 3,
+    id: 2,
     imageUrl: 'assets/property6.jpg',
     city: '3BHK Villa, 1400  Sqft',
     country: 'Hazara',
@@ -59,7 +59,7 @@ List<Popular> destinations = [
     prices: 'Rs 5000 / per month\n+10000 Deposit',
   ),
   Popular(
-    id: 4,
+    id: 3,
     imageUrl: 'assets/property1.jpg',
     city: '3BHK Villa, 1400  Sqft',
     country: 'Hazara',
@@ -69,7 +69,7 @@ List<Popular> destinations = [
     prices: 'Rs 22000 / per month\n+50000 Deposit',
   ),
   Popular(
-    id: 5,
+    id: 4,
     imageUrl: 'assets/property2.jpg',
     city: '3BHK Villa, 1400  Sqft',
     country: 'Hazara',
@@ -79,7 +79,7 @@ List<Popular> destinations = [
     prices: 'Rs 25000 / per month\n+70000 Deposit',
   ),
   Popular(
-    id: 6,
+    id: 5,
     imageUrl: 'assets/property1.jpg',
     city: '3BHK Villa, 1400  Sqft',
     country: 'Hazara',
@@ -89,7 +89,7 @@ List<Popular> destinations = [
     prices: 'Rs 25000 / per month\n+70000 Deposit',
   ),
   Popular(
-    id: 7,
+    id: 6,
     imageUrl: 'assets/property2.jpg',
     city: '3BHK Villa, 1400  Sqft',
     country: 'Hazara',

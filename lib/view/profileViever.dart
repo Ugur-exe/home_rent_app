@@ -23,22 +23,26 @@ class _ProfileViewerState extends State<ProfileViewer> {
   String _profileImageUrl = "";
 
   Future<void> _fetchProfileData() async {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    CollectionReference profiles =
+        FirebaseFirestore.instance.collection('users');
     String userId = FirebaseAuth.instance.currentUser!.uid;
-    DocumentSnapshot userDocument =
-        await firestore.collection('users').doc(userId).get();
-    Map<String, dynamic> documentData =
-        userDocument.data() as Map<String, dynamic>;
-    setState(() {
-      _firstName = documentData['firstName'];
-      _lastName = documentData['lastName'];
-      _profileImageUrl = documentData['profileImageUrl'];
-    });
+    try {
+      DocumentSnapshot userDocument =
+          await profiles.doc(userId).get();
+      Map<String, dynamic> documentData =
+          userDocument.data() as Map<String, dynamic>;
+      setState(() {
+        _firstName = documentData['firstName'] ?? "";
+        _lastName = documentData['lastName'] ?? "";
+        _profileImageUrl = documentData['profileImageUrl'] ?? "";
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> _uploadProfileImage() async {
     final picker = ImagePicker();
-
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       Reference storageReference =
@@ -52,10 +56,13 @@ class _ProfileViewerState extends State<ProfileViewer> {
   }
 
   Future<void> _saveProfileData() async {
-  _fetchProfileData();
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    _fetchProfileData();
+    CollectionReference profiles =
+        FirebaseFirestore.instance.collection('users');
     String userId = FirebaseAuth.instance.currentUser!.uid;
-    await firestore.collection('users').doc(userId).set({
+    await profiles
+        .doc(userId)
+        .set({
       'firstName': _firstNameController.text,
       'lastName': _lastNameController.text,
       'profileImageUrl': _profileImageUrl,
@@ -172,7 +179,7 @@ class _ProfileViewerState extends State<ProfileViewer> {
                         const SizedBox(
                           height: 15,
                         ),
-                         Text(
+                        Text(
                           'Name: $_firstName',
                           style: const TextStyle(
                               color: AppColors.primaryColor,
