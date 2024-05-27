@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:home_rent/utils/button.dart';
@@ -86,7 +87,9 @@ class _DestinationScreenState extends State<DestinationScreen> {
                           child: Center(
                             child: IconButton(
                                 onPressed: () async {
+                                var userId = FirebaseAuth.instance.currentUser!.uid;
                                   final Map<String, dynamic> variables = {
+                                    'id': widget.Popular.id,
                                     'imageUrl': widget.Popular.imageUrl,
                                     'city': widget.Popular.city,
                                     'country': widget.Popular.country,
@@ -94,14 +97,18 @@ class _DestinationScreenState extends State<DestinationScreen> {
                                     'rating': widget.Popular.rating,
                                     'prices': widget.Popular.prices,
                                   };
-                                  DocumentReference collections =
-                                      await FirebaseFirestore.instance
-                                          .collection('user_fav')
-                                          .doc(FirebaseAuth
-                                              .instance.currentUser!.uid);
+                                  try{
+                                    DocumentReference collections =
+                                      FirebaseFirestore.instance
+                                          .collection('users_fav')
+                                          .doc(userId);
                                   collections.update({
-                                    '${widget.Popular.id}' : FieldValue.arrayUnion([variables])
+                                    'favourites':
+                                        FieldValue.arrayUnion([variables])
                                   });
+                                  } on FirebaseException catch (e) {
+                                    print(e);
+                                  }
                                 },
                                 icon: const FaIcon(
                                   FontAwesomeIcons.star,

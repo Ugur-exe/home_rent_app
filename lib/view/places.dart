@@ -4,7 +4,7 @@ import 'package:home_rent/view/places_explain.dart';
 import 'package:home_rent/viewmodel/home_model.dart';
 
 class DestinationCarousel extends StatelessWidget {
-  const DestinationCarousel({Key? key}) : super(key: key);
+  const DestinationCarousel({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +100,7 @@ class DestinationCarousel extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Hero(
                           // for animation of image to next screen
-                          tag: populars.imageUrl,
+                          tag: populars.id,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20.0),
                             child: Padding(

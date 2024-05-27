@@ -22,30 +22,17 @@ class _SavedState extends State<Saved> {
   }
 
   void loadSavedHouses() async {
-    final Map<String, dynamic> favs = {};
-    DocumentReference collections = await FirebaseFirestore.instance
-        .collection('user_fav')
-        .doc(FirebaseAuth.instance.currentUser!.uid);
-    collections.get().then((DocumentSnapshot documentSnapshot) {
-      if (documentSnapshot.exists) {
-        favs.addAll(documentSnapshot.data() as Map<String, dynamic>);
-        print(favs);
-        favs.forEach((key, value) {
-          savedHouses[key] = value;
-        });
-        setState(() {
-          saved = savedHouses.keys.toList();
-        });
-      }
-    });
-
+    // DocumentReference collections = FirebaseFirestore.instance
+    //     .collection('user_fav')
+    //     .doc(FirebaseAuth.instance.currentUser!.uid)
+    //     .collection("favourites")
+    //     .doc();
+    // savedHouses =
+    //     collections.collection("favourites").get() as Map<String, dynamic>;
+    // print(collections.collection("favourites").get());
     // setState(() {
-    //   savedHomes.forEach((element) {
-    //     savedHouses[element.id] = element.data() as Map<String, dynamic>;
-    //     // print(savedHouses[element.id]);
-    //   });
-    //   saved = savedHouses.keys.toList();
-    //   print(saved);
+    //   savedHouses = savedHouses.cast();
+    //   print("saved: $saved");
     // });
   }
 
