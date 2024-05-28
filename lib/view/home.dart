@@ -269,7 +269,7 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               Gap(isWidth: false, isHeight: true, height: height * 0.02),
-              const DestinationCarousel(),
+              DestinationCarousel(),
 
               //Near by Estate Explore
               Gap(isWidth: false, isHeight: true, height: height * 0.03),

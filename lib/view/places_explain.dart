@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,9 +8,9 @@ import 'package:home_rent/utils/button.dart';
 import 'package:home_rent/utils/color.dart';
 
 class DestinationScreen extends StatefulWidget {
-  final Popular;
+  final Homes;
   //method
-  const DestinationScreen({super.key, required this.Popular});
+  const DestinationScreen({super.key, required this.Homes});
   @override
   State<DestinationScreen> createState() => _DestinationScreenState();
 }
@@ -38,13 +37,13 @@ class _DestinationScreenState extends State<DestinationScreen> {
                     ],
                   ),
                   child: Hero(
-                    tag: widget.Popular.imageUrl,
+                    tag: widget.Homes.imageUrl,
                     child: ClipRRect(
                       borderRadius: const BorderRadius.only(
                           bottomRight: Radius.circular(20),
                           bottomLeft: Radius.circular(20)),
                       child: Image(
-                        image: AssetImage(widget.Popular.imageUrl),
+                        image: AssetImage(widget.Homes.imageUrl),
                         fit: BoxFit.cover,
                       ),
                     ),

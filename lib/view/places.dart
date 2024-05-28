@@ -2,13 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:home_rent/utils/color.dart';
 import 'package:home_rent/view/places_explain.dart';
 import 'package:home_rent/viewmodel/home_model.dart';
+import 'package:home_rent/viewmodel/model.dart';
 
-class DestinationCarousel extends StatelessWidget {
+// ignore: must_be_immutable
+class DestinationCarousel extends StatefulWidget {
   const DestinationCarousel({super.key});
 
+  @override
+  State<DestinationCarousel> createState() => _DestinationCarouselState();
+}
 
+class _DestinationCarouselState extends State<DestinationCarousel> {
+  final models = Homes(
+      id: 0,
+      imageUrl: '',
+      city: '',
+      country: '',
+      description: '',
+      rating: '',
+      prices: '');
 
-  
+  List<Homes> homes = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
