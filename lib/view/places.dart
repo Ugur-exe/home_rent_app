@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:home_rent/utils/color.dart';
 import 'package:home_rent/view/places_explain.dart';
@@ -13,24 +15,29 @@ class DestinationCarousel extends StatefulWidget {
 }
 
 class _DestinationCarouselState extends State<DestinationCarousel> {
-  final models = Homes(
-      id: 0,
-      imageUrl: '',
-      city: '',
-      country: '',
-      description: '',
-      rating: '',
-      prices: '');
+  List<Map<String, dynamic>> savedHouses = [];
+  void _loadFromFirestore() async {
+    CollectionReference collection =
+        FirebaseFirestore.instance.collection('homes');
 
-  List<Homes> homes = [];
+    QuerySnapshot querySnapshot = await collection.get();
+    List<DocumentSnapshot> documents = querySnapshot.docs;
+
+    for (var doc in documents) {
+      savedHouses.add(doc.data() as Map<String, dynamic>);
+    }
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
+    _loadFromFirestore();
   }
 
   @override
   Widget build(BuildContext context) {
+    _loadFromFirestore();
     return Column(
       //destination text
       children: [
@@ -40,9 +47,17 @@ class _DestinationCarouselState extends State<DestinationCarousel> {
           //color: Colors.blue,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: destinations.length,
+            itemCount: savedHouses.length,
             itemBuilder: (BuildContext context, int index) {
-              Popular populars = destinations[index];
+              Popular populars = Popular(
+                id: savedHouses[index]['id'],
+                imageUrl: savedHouses[index]['imageUrl'],
+                city: savedHouses[index]['city'],
+                country: savedHouses[index]['country'],
+                description: savedHouses[index]['description'],
+                rating: savedHouses[index]['rating'],
+                prices: savedHouses[index]['prices'],
+              );
               return GestureDetector(
                 onTap: () => Navigator.push(
                   context,
