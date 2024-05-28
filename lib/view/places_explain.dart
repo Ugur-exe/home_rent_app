@@ -7,8 +7,10 @@ import 'package:home_rent/utils/button.dart';
 import 'package:home_rent/utils/color.dart';
 
 class DestinationScreen extends StatefulWidget {
+  // ignore: prefer_typing_uninitialized_variables, non_constant_identifier_names
   final Popular;
   //method
+  // ignore: non_constant_identifier_names
   const DestinationScreen({super.key, required this.Popular});
   @override
   State<DestinationScreen> createState() => _DestinationScreenState();
