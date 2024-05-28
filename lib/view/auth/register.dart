@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:home_rent/api/message_user.dart';
 import 'package:home_rent/view/auth/login.dart';
 import 'package:toastification/toastification.dart';
 
@@ -94,10 +96,28 @@ class _registerState extends State<register> {
                 child: const Text("Register"),
                 onPressed: () async {
                   try {
-                    await FirebaseAuth.instance
-                        .createUserWithEmailAndPassword(
-                            email: emailController.text,
-                            password: passwdController.text);
+                    final time =
+                        DateTime.now().millisecondsSinceEpoch.toString();
+                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                        email: emailController.text,
+                        password: passwdController.text);
+
+                    final newUser = MessageUser(
+                        image: "",
+                        about: "",
+                        name: "Not set",
+                        createdAt: time,
+                        id: FirebaseAuth.instance.currentUser!.uid,
+                        isOnline: false,
+                        lastActive: time,
+                        email: emailController.text,
+                        pushToken: "",
+                        lastName: "Not set",);
+
+                    await FirebaseFirestore.instance
+                        .collection("users")
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .set(newUser.toJson());
                     toastification.show(
                       context: context,
                       type: ToastificationType.success,
@@ -110,6 +130,7 @@ class _registerState extends State<register> {
                         ),
                       ),
                     );
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(

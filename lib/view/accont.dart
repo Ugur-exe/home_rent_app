@@ -15,32 +15,24 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   String _firstName = "";
-  String _lastName = "";
   String _profileImageUrl = "";
-
+  String _lastName = "";
+  Map<String, dynamic> data = {};
   Future<void> _fetchProfileData() async {
-    Map<String, dynamic> data;
     CollectionReference profiles =
         FirebaseFirestore.instance.collection('users');
     String userId = FirebaseAuth.instance.currentUser!.uid;
     try {
       DocumentSnapshot document = await profiles.doc(userId).get();
-      if (!document.exists) {
-        document.reference.set({
-          'firstName': 'Not Set',
-          'lastName': 'Not Set',
-          'profileImageUrl':
-              'https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png'
-        });
-      }
       data = document.data() as Map<String, dynamic>;
-        setState(() {
-          _firstName = data['firstName'];
-          _lastName = data['lastName'];
-          _profileImageUrl = data['profileImageUrl'];
-        });
+      setState(() {
+        _firstName = data['name'];
+        _profileImageUrl = data['image'];
+        _lastName = data['lastName'];
+      });
     } catch (e) {
       print(e);
+      print(data);
     }
   }
 
@@ -103,9 +95,7 @@ class _ProfileState extends State<Profile> {
                     height: 100,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: Image.network(_profileImageUrl ??
-                                  "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png")
-                              .image,
+                          image: Image.asset(_profileImageUrl).image,
                         ),
                         borderRadius: BorderRadius.circular(15)),
                   ),
@@ -131,7 +121,7 @@ class _ProfileState extends State<Profile> {
                           height: 10,
                         ),
                         Text(
-                          'Surname: $_lastName',
+                          'Last name: $_lastName',
                           style: const TextStyle(
                               color: AppColors.primaryColor,
                               fontWeight: FontWeight.bold),

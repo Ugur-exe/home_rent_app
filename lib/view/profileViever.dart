@@ -32,9 +32,9 @@ class _ProfileViewerState extends State<ProfileViewer> {
       Map<String, dynamic> documentData =
           userDocument.data() as Map<String, dynamic>;
       setState(() {
-        _firstName = documentData['firstName'] ?? "";
-        _lastName = documentData['lastName'] ?? "";
-        _profileImageUrl = documentData['profileImageUrl'] ?? "";
+        _firstName = documentData['name'] ?? "";
+        _lastName = documentData['last_name'] ?? "";
+        _profileImageUrl = documentData['image'] ?? "";
       });
     } catch (e) {
       print(e);
@@ -62,10 +62,10 @@ class _ProfileViewerState extends State<ProfileViewer> {
     String userId = FirebaseAuth.instance.currentUser!.uid;
     await profiles
         .doc(userId)
-        .set({
-      'firstName': _firstNameController.text,
+        .update({
+      'name': _firstNameController.text,
       'lastName': _lastNameController.text,
-      'profileImageUrl': _profileImageUrl,
+      'image': _profileImageUrl,
     });
     toastification.show(
       context: context,
@@ -156,7 +156,7 @@ class _ProfileViewerState extends State<ProfileViewer> {
                     height: 100,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: Image.network(_profileImageUrl).image,
+                          image: Image.network(_profileImageUrl).image ?? Image.asset('assets/user.png').image,
                         ),
                         borderRadius: BorderRadius.circular(15)),
                     child: InkWell(

@@ -18,7 +18,7 @@ class _BottomNaviState extends State<BottomNavi> {
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     Saved(),
-    InboxPage(),
+    Inbox(),
     Profile(),
   ];
   @override

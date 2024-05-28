@@ -1,63 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:home_rent/api/message_api.dart';
+import 'package:home_rent/api/message_user.dart';
 import 'package:home_rent/view/chatPage.dart';
+import 'package:home_rent/view/user_card.dart';
 
-class InboxPage extends StatelessWidget {
-  const InboxPage({super.key});
+class Inbox extends StatefulWidget {
+  const Inbox({super.key});
 
-  
+  @override
+  State<Inbox> createState() => _InboxState();
+}
 
+class _InboxState extends State<Inbox> {
+  List<MessageUser> messages = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Inbox'),
-      ),
-      body: ListView.builder(
-        itemCount: 10, // Replace with your actual data count
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const ChatPage(),
-                ),
-              );
-              
-            },
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: const Row(
-                children: [
-                  CircleAvatar(
-                    // Replace with profile picture
-                    backgroundImage: AssetImage('assets/image.png'),
-                  ),
-                  SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'John Doe', // Replace with name
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Text(
-                        'Last message', // Replace with last message
-                        style: TextStyle(
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
+        appBar: AppBar(
+          title: const Text('Inbox'),
+        ),
+        body: StreamBuilder(
+          stream: MessageApi.db.collection("messageList").snapshots(),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+              case ConnectionState.none:
+                return const Center(child: CircularProgressIndicator());
+
+              case ConnectionState.active:
+              case ConnectionState.done:
+                final data = snapshot.data?.docs;
+                messages =
+                    data?.map((e) => MessageUser.fromJson(e.data())).toList() ??
+                        [];
+                if (messages.isNotEmpty) {
+                  return ListView.builder(
+                    itemCount:
+                        messages.length, // Replace with your actual data count
+                    itemBuilder: (context, index) {
+                      return UserCard(
+                        messageUser: messages[index],
+                      );
+                    },
+                  );
+                } else {
+                  return const Center(
+                      child: Text(
+                    'No messages found.',
+                    style: TextStyle(fontSize: 20),
+                  ));
+                }
+            }
+          },
+        ));
   }
 }
