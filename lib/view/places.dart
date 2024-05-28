@@ -47,7 +47,9 @@ class _DestinationCarouselState extends State<DestinationCarousel> {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => DestinationScreen(Popular: populars),
+                    builder: (_) => DestinationScreen(
+                      Popular: populars,
+                    ),
                   ),
                 ),
                 child: Container(

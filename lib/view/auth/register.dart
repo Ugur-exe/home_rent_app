@@ -9,8 +9,8 @@ import 'package:toastification/toastification.dart';
 
 class register extends StatefulWidget {
   const register({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<register> createState() => _registerState();

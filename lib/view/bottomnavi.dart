@@ -9,7 +9,7 @@ import 'package:home_rent/view/inbox.dart';
 import 'package:home_rent/view/saved.dart';
 
 class BottomNavi extends StatefulWidget {
-  const BottomNavi({Key? key}) : super(key: key);
+  const BottomNavi({super.key});
   @override
   State<BottomNavi> createState() => _BottomNaviState();
 }

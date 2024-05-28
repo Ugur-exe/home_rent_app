@@ -15,7 +15,7 @@ class AppInput extends StatefulWidget {
       otherColor;
   final Icon icon;
   const AppInput(
-      {Key? key,
+      {super.key,
         required this.myController,
         required this.focusNode,
         required this.obscureText,
@@ -26,8 +26,7 @@ class AppInput extends StatefulWidget {
         this.rightIcon = false,
         this.otherColor = false,
         this.enable = true,
-        this.autoFocus = false})
-      : super(key: key);
+        this.autoFocus = false});
 
   @override
   State<AppInput> createState() => _AppInputState();
