@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:home_rent/utils/color.dart';
 import 'package:home_rent/view/places_explain.dart';
@@ -14,7 +16,7 @@ class Saved extends StatefulWidget {
 }
 
 class _SavedState extends State<Saved> {
-  List<Map<String, dynamic>> savedHouses = [];
+  List savedHouses = [];
 
   void _loadFromSharedPreferences() async {
     final prefs = await SharedPreferences.getInstance();
@@ -22,16 +24,39 @@ class _SavedState extends State<Saved> {
     setState(() {
       if (jsonString != null) {
         final list = List<Map<String, dynamic>>.from(jsonDecode(jsonString));
+
         savedHouses = list;
       }
     });
+  }
+
+  void _loadFromFirestore() async {
+    CollectionReference collection =
+        FirebaseFirestore.instance.collection('variables_list');
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+
+    DocumentSnapshot doc = await collection.doc(userId).get();
+
+    if (doc.exists) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+      if (data.isNotEmpty) {
+        var get = List<Map<String, dynamic>>.from(data['listStars']);
+        savedHouses = get;
+        print(savedHouses);
+      } else {
+        // print(doc.data());
+      }
+    }
+    setState(() {});
   }
 
   List<String> saved = [];
   @override
   void initState() {
     super.initState();
-    _loadFromSharedPreferences();
+
+    _loadFromFirestore();
   }
 
   void loadSavedHouses() async {
@@ -71,7 +96,15 @@ class _SavedState extends State<Saved> {
         scrollDirection: Axis.vertical,
         itemCount: savedHouses.length,
         itemBuilder: (BuildContext context, int index) {
-          Popular populars = destinations[index];
+          Popular populars = Popular(
+            id: savedHouses[index]['id'],
+            imageUrl: savedHouses[index]['imageUrl'],
+            city: savedHouses[index]['city'],
+            country: savedHouses[index]['country'],
+            description: savedHouses[index]['description'],
+            rating: savedHouses[index]['rating'],
+            prices: savedHouses[index]['prices'],
+          );
           var savedHouse = savedHouses[index];
           return GestureDetector(
             onTap: () => Navigator.push(

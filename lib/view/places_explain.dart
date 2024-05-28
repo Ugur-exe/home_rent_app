@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:home_rent/utils/button.dart';
@@ -15,9 +17,37 @@ class DestinationScreen extends StatefulWidget {
 }
 
 class _DestinationScreenState extends State<DestinationScreen> {
-  void _saveToSharedPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    final variables = {
+  // void _saveToSharedPreferences() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final variables = {
+  //     'id': widget.Popular.id,
+  //     'imageUrl': widget.Popular.imageUrl,
+  //     'city': widget.Popular.city,
+  //     'country': widget.Popular.country,
+  //     'description': widget.Popular.description,
+  //     'rating': widget.Popular.rating,
+  //     'prices': widget.Popular.prices,
+  //   };
+
+  //   List<Map<String, dynamic>> list;
+  //   final jsonString = prefs.getString('variables_list');
+
+  //   if (jsonString != null) {
+  //     list = List<Map<String, dynamic>>.from(jsonDecode(jsonString));
+  //   } else {
+  //     list = [];
+  //   }
+
+  //   if (!list.any((item) => item['id'] == variables['id'])) {
+  //     list.add(variables);
+
+  //     prefs.setString('variables_list', jsonEncode(list));
+  //   }
+
+  //   _loadFromSharedPreferences();
+  // }
+  void _saveToFirestore() async {
+    Map<String, dynamic> variables = {
       'id': widget.Popular.id,
       'imageUrl': widget.Popular.imageUrl,
       'city': widget.Popular.city,
@@ -27,75 +57,89 @@ class _DestinationScreenState extends State<DestinationScreen> {
       'prices': widget.Popular.prices,
     };
 
-    List<Map<String, dynamic>> list;
-    final jsonString = prefs.getString('variables_list');
+    List listDeneme = [];
+    listDeneme.add(variables);
+    CollectionReference collection =
+        FirebaseFirestore.instance.collection('variables_list');
+    String userId = FirebaseAuth.instance.currentUser!.uid;
 
-    if (jsonString != null) {
-      list = List<Map<String, dynamic>>.from(jsonDecode(jsonString));
-    } else {
-      list = [];
+    await collection.doc(userId).set(
+        {'listStars': FieldValue.arrayUnion(listDeneme)},
+        SetOptions(merge: true));
+
+    _loadFromFirestore();
+  }
+
+  void _loadFromFirestore() async {
+    CollectionReference collection =
+        FirebaseFirestore.instance.collection('variables_list');
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+
+    DocumentSnapshot doc = await collection.doc(userId).get();
+
+    if (doc.exists) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+      if (data.isNotEmpty) {
+        setState(() {
+          var get = List<Map<String, dynamic>>.from(data['listStars']);
+          savedHouses = get;
+          loadStarIcon();
+        });
+      } else {}
     }
-
-    if (!list.any((item) => item['id'] == variables['id'])) {
-      list.add(variables);
-
-      prefs.setString('variables_list', jsonEncode(list));
-    }
-
-    _loadFromSharedPreferences();
   }
 
   bool loadStarIcon() {
     for (var id in savedHouses) {
       if (id['id'] == widget.Popular.id) {
-        print('true : ${widget.Popular.id}');
         return true;
       }
     }
-    print('false: ${widget.Popular.id}');
+
     return false;
   }
 
   List<Map<String, dynamic>> savedHouses = [];
-  void _loadFromSharedPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString('variables_list');
-    if (jsonString != null) {
-      final list = List<Map<String, dynamic>>.from(jsonDecode(jsonString));
-      // Now you can use the list of maps
-      savedHouses = list;
-      setState(() {
-        loadStarIcon();
-      });
-      print(savedHouses);
-    }
-  }
+  // void _loadFromSharedPreferences() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final jsonString = prefs.getString('variables_list');
+  //   if (jsonString != null) {
+  //     final list = List<Map<String, dynamic>>.from(jsonDecode(jsonString));
+  //     // Now you can use the list of maps
+  //     savedHouses = list;
+  //     setState(() {
+  //       loadStarIcon();
+  //     });
+  //     print(savedHouses);
+  //   }
+  // }
 
   void _onIconPressed() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString('variables_list');
-    List<Map<String, dynamic>> list = jsonString != null
-        ? List<Map<String, dynamic>>.from(jsonDecode(jsonString))
-        : [];
+    List<Map<String, dynamic>> list = savedHouses;
+    if (list.any((item) => item['id'] == widget.Popular.id)) {
+      CollectionReference collection =
+          FirebaseFirestore.instance.collection('variables_list');
+      String userId = FirebaseAuth.instance.currentUser!.uid;
 
-    setState(() {
-      if (list.any((item) => item['id'] == widget.Popular.id)) {
-        list.removeWhere((item) => item['id'] == widget.Popular.id);
-        prefs.setString('variables_list', jsonEncode(list));
-      } else {
-        _saveToSharedPreferences();
-      }
-
-      _loadFromSharedPreferences();
-    });
+      Map<String, dynamic> itemToRemove =
+          list.firstWhere((item) => item['id'] == widget.Popular.id);
+      list.remove(itemToRemove);
+      await collection.doc(userId).update({
+        'listStars': FieldValue.arrayRemove([itemToRemove]),
+      });
+    } else {
+      _saveToFirestore();
+      loadStarIcon();
+    }
+    setState(() {});
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadFromSharedPreferences();
+      _loadFromFirestore();
     });
   }
 
