@@ -36,16 +36,16 @@ class _StartedScreenState extends State<StartedScreen> {
       await auth
           .signInWithEmailAndPassword(email: email!, password: password!)
           .then((value) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const BottomNavi()));
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const BottomNavi()));
         toastification.show(
-                        context: context,
-                        type: ToastificationType.success,
-                        title: const Text('Success'),
-                        description: const Text.rich(
-                            TextSpan(text: 'Autologin Successful!!')),
-                        autoCloseDuration: const Duration(seconds: 4),
-                        icon: const Icon(Icons.check));
+            context: context,
+            type: ToastificationType.success,
+            title: const Text('Success'),
+            description:
+                const Text.rich(TextSpan(text: 'Autologin Successful!!')),
+            autoCloseDuration: const Duration(seconds: 4),
+            icon: const Icon(Icons.check));
       }).catchError((e) {
         prefs.setBool('login', false);
       });

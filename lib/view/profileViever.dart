@@ -27,13 +27,12 @@ class _ProfileViewerState extends State<ProfileViewer> {
         FirebaseFirestore.instance.collection('users');
     String userId = FirebaseAuth.instance.currentUser!.uid;
     try {
-      DocumentSnapshot userDocument =
-          await profiles.doc(userId).get();
+      DocumentSnapshot userDocument = await profiles.doc(userId).get();
       Map<String, dynamic> documentData =
           userDocument.data() as Map<String, dynamic>;
       setState(() {
         _firstName = documentData['name'] ?? "";
-        _lastName = documentData['last_name'] ?? "";
+        _lastName = documentData['lastName'] ?? "";
         _profileImageUrl = documentData['image'] ?? "";
       });
     } catch (e) {
@@ -49,8 +48,14 @@ class _ProfileViewerState extends State<ProfileViewer> {
           FirebaseStorage.instance.ref().child(pickedFile.path.split('/').last);
       storageReference.putFile(File(pickedFile.path));
       String imageUrl = await storageReference.getDownloadURL();
-      setState(() {
+      setState(() async {
         _profileImageUrl = imageUrl;
+        CollectionReference profiles =
+            FirebaseFirestore.instance.collection('users');
+        String userId = FirebaseAuth.instance.currentUser!.uid;
+        await profiles.doc(userId).set({
+          'image': _profileImageUrl,
+        }, SetOptions(merge: true));
       });
     }
   }
@@ -60,13 +65,10 @@ class _ProfileViewerState extends State<ProfileViewer> {
     CollectionReference profiles =
         FirebaseFirestore.instance.collection('users');
     String userId = FirebaseAuth.instance.currentUser!.uid;
-    await profiles
-        .doc(userId)
-        .update({
+    await profiles.doc(userId).set({
       'name': _firstNameController.text,
       'lastName': _lastNameController.text,
-      'image': _profileImageUrl,
-    });
+    }, SetOptions(merge: true));
     toastification.show(
       context: context,
       type: ToastificationType.success,
@@ -125,7 +127,7 @@ class _ProfileViewerState extends State<ProfileViewer> {
                           )),
                     ),
                     const SizedBox(
-                      width: 100,
+                      width: 80,
                     ),
                     const Text(
                       'Edit Your Profile',
@@ -156,7 +158,8 @@ class _ProfileViewerState extends State<ProfileViewer> {
                     height: 100,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: Image.network(_profileImageUrl).image ?? Image.asset('assets/user.png').image,
+                          image: Image.network(_profileImageUrl).image ??
+                              Image.asset('assets/user.png').image,
                         ),
                         borderRadius: BorderRadius.circular(15)),
                     child: InkWell(
@@ -217,6 +220,9 @@ class _ProfileViewerState extends State<ProfileViewer> {
                   TextFormField(
                     controller: _lastNameController,
                     decoration: const InputDecoration(labelText: 'Lastname'),
+                    onChanged: (value) {
+                      print(value);
+                    },
                   ),
                   const SizedBox(height: 16.0),
                   ElevatedButton(
