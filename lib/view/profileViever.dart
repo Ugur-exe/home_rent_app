@@ -21,7 +21,7 @@ class _ProfileViewerState extends State<ProfileViewer> {
   String _firstName = "";
   String _lastName = "";
   String _profileImageUrl = "";
-  
+
   Future<void> _fetchProfileData() async {
     CollectionReference profiles =
         FirebaseFirestore.instance.collection('users');
@@ -61,7 +61,10 @@ class _ProfileViewerState extends State<ProfileViewer> {
                 child: Text('OK'),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  await _uploadImage(pickedFile );
+                  setState(() async {
+                    await _uploadImage(PickedFile(pickedFile.path));
+                    _fetchProfileData();
+                  });
                 },
               ),
             ],
@@ -119,9 +122,13 @@ class _ProfileViewerState extends State<ProfileViewer> {
     );
   }
 
-  _ProfileViewerState() {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
     _fetchProfileData();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
