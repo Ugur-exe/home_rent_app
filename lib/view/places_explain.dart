@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -87,7 +89,6 @@ class _DestinationScreenState extends State<DestinationScreen> {
                           child: Center(
                             child: IconButton(
                                 onPressed: () async {
-                                var userId = FirebaseAuth.instance.currentUser!.uid;
                                   final Map<String, dynamic> variables = {
                                     'id': widget.Popular.id,
                                     'imageUrl': widget.Popular.imageUrl,
@@ -100,12 +101,9 @@ class _DestinationScreenState extends State<DestinationScreen> {
                                   try{
                                     DocumentReference collections =
                                       FirebaseFirestore.instance
-                                          .collection('users_fav')
-                                          .doc(userId);
-                                  collections.update({
-                                    'favourites':
-                                        FieldValue.arrayUnion([variables])
-                                  });
+                                          .collection('homes')
+                                          .doc(widget.Popular.id.toString());
+                                  collections.set(variables);
                                   } on FirebaseException catch (e) {
                                     print(e);
                                   }

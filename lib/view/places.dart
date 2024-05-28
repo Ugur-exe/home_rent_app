@@ -6,6 +6,10 @@ import 'package:home_rent/viewmodel/home_model.dart';
 class DestinationCarousel extends StatelessWidget {
   const DestinationCarousel({super.key});
 
+
+
+  
+
   @override
   Widget build(BuildContext context) {
     return Column(
