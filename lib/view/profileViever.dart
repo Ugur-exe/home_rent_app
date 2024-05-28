@@ -48,17 +48,17 @@ class _ProfileViewerState extends State<ProfileViewer> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Confirm'),
-            content: Text('Do you want to upload this image?'),
+            title: const Text('Confirm'),
+            content: const Text('Do you want to upload this image?'),
             actions: <Widget>[
               TextButton(
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               TextButton(
-                child: Text('OK'),
+                child: const Text('OK'),
                 onPressed: () async {
                   Navigator.of(context).pop();
                   setState(() async {
