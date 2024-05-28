@@ -21,7 +21,7 @@ class _ProfileViewerState extends State<ProfileViewer> {
   String _firstName = "";
   String _lastName = "";
   String _profileImageUrl = "";
-
+  
   Future<void> _fetchProfileData() async {
     CollectionReference profiles =
         FirebaseFirestore.instance.collection('users');
@@ -44,20 +44,56 @@ class _ProfileViewerState extends State<ProfileViewer> {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      Reference storageReference =
-          FirebaseStorage.instance.ref().child(pickedFile.path.split('/').last);
-      storageReference.putFile(File(pickedFile.path));
-      String imageUrl = await storageReference.getDownloadURL();
-      setState(() async {
-        _profileImageUrl = imageUrl;
-        CollectionReference profiles =
-            FirebaseFirestore.instance.collection('users');
-        String userId = FirebaseAuth.instance.currentUser!.uid;
-        await profiles.doc(userId).set({
-          'image': _profileImageUrl,
-        }, SetOptions(merge: true));
-      });
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Confirm'),
+            content: Text('Do you want to upload this image?'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: Text('OK'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await _uploadImage(pickedFile );
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
+  }
+
+  Future<void> _uploadImage(PickedFile pickedFile) async {
+    Reference storageReference =
+        FirebaseStorage.instance.ref().child(pickedFile.path.split('/').last);
+    storageReference.putFile(File(pickedFile.path));
+    String imageUrl = await storageReference.getDownloadURL();
+    CollectionReference profiles =
+        FirebaseFirestore.instance.collection('users');
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    await profiles.doc(userId).set({
+      'image': imageUrl,
+    }, SetOptions(merge: true));
+    toastification.show(
+      context: context,
+      type: ToastificationType.success,
+      autoCloseDuration: const Duration(seconds: 3),
+      icon: const Icon(Icons.check),
+      title: const Text('Success'),
+      description: const Text.rich(
+        TextSpan(
+          text: 'You changed your profile image',
+        ),
+      ),
+    );
   }
 
   Future<void> _saveProfileData() async {
