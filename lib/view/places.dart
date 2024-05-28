@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:home_rent/utils/color.dart';
 import 'package:home_rent/view/places_explain.dart';
 import 'package:home_rent/viewmodel/home_model.dart';
-import 'package:home_rent/viewmodel/model.dart';
 
 // ignore: must_be_immutable
 class DestinationCarousel extends StatefulWidget {

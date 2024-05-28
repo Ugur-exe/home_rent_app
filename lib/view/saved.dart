@@ -1,12 +1,9 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:home_rent/utils/color.dart';
 import 'package:home_rent/view/places_explain.dart';
 import 'package:home_rent/viewmodel/home_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Saved extends StatefulWidget {
   const Saved({super.key});
@@ -17,18 +14,6 @@ class Saved extends StatefulWidget {
 
 class _SavedState extends State<Saved> {
   List savedHouses = [];
-
-  void _loadFromSharedPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString('variables_list');
-    setState(() {
-      if (jsonString != null) {
-        final list = List<Map<String, dynamic>>.from(jsonDecode(jsonString));
-
-        savedHouses = list;
-      }
-    });
-  }
 
   void _loadFromFirestore() async {
     CollectionReference collection =
@@ -43,7 +28,6 @@ class _SavedState extends State<Saved> {
       if (data.isNotEmpty) {
         var get = List<Map<String, dynamic>>.from(data['listStars']);
         savedHouses = get;
-        print(savedHouses);
       } else {
         // print(doc.data());
       }
@@ -76,8 +60,6 @@ class _SavedState extends State<Saved> {
 
   @override
   Widget build(BuildContext context) {
-    double top = MediaQuery.of(context).padding.top;
-    double bottom = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
       appBar: AppBar(

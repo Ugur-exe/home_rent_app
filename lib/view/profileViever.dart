@@ -36,7 +36,20 @@ class _ProfileViewerState extends State<ProfileViewer> {
         _profileImageUrl = documentData['image'] ?? "";
       });
     } catch (e) {
-      print(e);
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: const Text('An error occurred while fetching profile data'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },);
     }
   }
 
@@ -201,8 +214,7 @@ class _ProfileViewerState extends State<ProfileViewer> {
                     height: 100,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: Image.network(_profileImageUrl).image ??
-                              Image.asset('assets/user.png').image,
+                          image: Image.network(_profileImageUrl).image,
                         ),
                         borderRadius: BorderRadius.circular(15)),
                     child: InkWell(

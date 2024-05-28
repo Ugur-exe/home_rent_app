@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:home_rent/utils/button.dart';
 import 'package:home_rent/utils/color.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class DestinationScreen extends StatefulWidget {
   final Popular;
