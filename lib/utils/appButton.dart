@@ -14,7 +14,7 @@ class AppButton extends StatelessWidget {
   final Widget child;
 
   const AppButton(
-      {Key? key,
+      {super.key,
         this.width = double.infinity,
         this.height = 50,
         this.radius = 30,
@@ -31,8 +31,7 @@ class AppButton extends StatelessWidget {
         required this.onPress,
         this.bgColor = AppColors.primaryColor,
         this.textColor = AppColors.primaryTextTextColor,
-        this.title = "default"})
-      : super(key: key);
+        this.title = "default"});
 
   @override
   Widget build(BuildContext context) {

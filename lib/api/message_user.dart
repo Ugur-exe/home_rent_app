@@ -37,17 +37,17 @@ class MessageUser {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['image'] = this.image;
-    data['about'] = this.about;
-    data['name'] = this.name;
-    data['created_at'] = this.createdAt;
-    data['id'] = this.id;
-    data['is_online'] = this.isOnline;
-    data['last_active'] = this.lastActive;
-    data['email'] = this.email;
-    data['push_token'] = this.pushToken;
-    data['lastName'] = this.pushToken;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['image'] = image;
+    data['about'] = about;
+    data['name'] = name;
+    data['created_at'] = createdAt;
+    data['id'] = id;
+    data['is_online'] = isOnline;
+    data['last_active'] = lastActive;
+    data['email'] = email;
+    data['push_token'] = pushToken;
+    data['lastName'] = pushToken;
     return data;
   }
 }

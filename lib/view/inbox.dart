@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:home_rent/api/message_api.dart';
 import 'package:home_rent/api/message_user.dart';
-import 'package:home_rent/view/chatPage.dart';
 import 'package:home_rent/view/user_card.dart';
 
 class Inbox extends StatefulWidget {

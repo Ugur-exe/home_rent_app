@@ -1,21 +1,103 @@
+import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:home_rent/utils/button.dart';
 import 'package:home_rent/utils/color.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DestinationScreen extends StatefulWidget {
-  final Homes;
+  final Popular;
   //method
-  const DestinationScreen({super.key, required this.Homes});
+  const DestinationScreen({super.key, required this.Popular});
   @override
   State<DestinationScreen> createState() => _DestinationScreenState();
 }
 
 class _DestinationScreenState extends State<DestinationScreen> {
+  void _saveToSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    final variables = {
+      'id': widget.Popular.id,
+      'imageUrl': widget.Popular.imageUrl,
+      'city': widget.Popular.city,
+      'country': widget.Popular.country,
+      'description': widget.Popular.description,
+      'rating': widget.Popular.rating,
+      'prices': widget.Popular.prices,
+    };
+
+    List<Map<String, dynamic>> list;
+    final jsonString = prefs.getString('variables_list');
+
+    if (jsonString != null) {
+      list = List<Map<String, dynamic>>.from(jsonDecode(jsonString));
+    } else {
+      list = [];
+    }
+
+    if (!list.any((item) => item['id'] == variables['id'])) {
+      list.add(variables);
+
+      prefs.setString('variables_list', jsonEncode(list));
+    }
+
+    _loadFromSharedPreferences();
+  }
+
+  bool loadStarIcon() {
+    for (var id in savedHouses) {
+      if (id['id'] == widget.Popular.id) {
+        print('true : ${widget.Popular.id}');
+        return true;
+      }
+    }
+    print('false: ${widget.Popular.id}');
+    return false;
+  }
+
+  List<Map<String, dynamic>> savedHouses = [];
+  void _loadFromSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString('variables_list');
+    if (jsonString != null) {
+      final list = List<Map<String, dynamic>>.from(jsonDecode(jsonString));
+      // Now you can use the list of maps
+      savedHouses = list;
+      setState(() {
+        loadStarIcon();
+      });
+      print(savedHouses);
+    }
+  }
+
+  void _onIconPressed() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString('variables_list');
+    List<Map<String, dynamic>> list = jsonString != null
+        ? List<Map<String, dynamic>>.from(jsonDecode(jsonString))
+        : [];
+
+    setState(() {
+      if (list.any((item) => item['id'] == widget.Popular.id)) {
+        list.removeWhere((item) => item['id'] == widget.Popular.id);
+        prefs.setString('variables_list', jsonEncode(list));
+      } else {
+        _saveToSharedPreferences();
+      }
+
+      _loadFromSharedPreferences();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadFromSharedPreferences();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,13 +119,13 @@ class _DestinationScreenState extends State<DestinationScreen> {
                     ],
                   ),
                   child: Hero(
-                    tag: widget.Homes.imageUrl,
+                    tag: widget.Popular.imageUrl,
                     child: ClipRRect(
                       borderRadius: const BorderRadius.only(
                           bottomRight: Radius.circular(20),
                           bottomLeft: Radius.circular(20)),
                       child: Image(
-                        image: AssetImage(widget.Homes.imageUrl),
+                        image: AssetImage(widget.Popular.imageUrl),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -87,31 +169,16 @@ class _DestinationScreenState extends State<DestinationScreen> {
                           ),
                           child: Center(
                             child: IconButton(
-                                onPressed: () async {
-                                  final Map<String, dynamic> variables = {
-                                    'id': widget.Popular.id,
-                                    'imageUrl': widget.Popular.imageUrl,
-                                    'city': widget.Popular.city,
-                                    'country': widget.Popular.country,
-                                    'description': widget.Popular.description,
-                                    'rating': widget.Popular.rating,
-                                    'prices': widget.Popular.prices,
-                                  };
-                                  try{
-                                    DocumentReference collections =
-                                      FirebaseFirestore.instance
-                                          .collection('homes')
-                                          .doc(widget.Popular.id.toString());
-                                  collections.set(variables);
-                                  } on FirebaseException catch (e) {
-                                    print(e);
-                                  }
-                                },
-                                icon: const FaIcon(
-                                  FontAwesomeIcons.star,
-                                  size: 18.0,
-                                  color: AppColors.primaryColor,
-                                )),
+                              onPressed: () {
+                                _onIconPressed();
+                              },
+                              icon: Icon(
+                                loadStarIcon()
+                                    ? Icons.star
+                                    : Icons.star_border_outlined,
+                                color: AppColors.primaryColor,
+                              ),
+                            ),
                           ),
                         ),
                       ],

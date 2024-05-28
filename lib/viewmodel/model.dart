@@ -27,14 +27,14 @@ class Homes {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['imageUrl'] = this.imageUrl;
-    data['city'] = this.city;
-    data['country'] = this.country;
-    data['description'] = this.description;
-    data['rating'] = this.rating;
-    data['prices'] = this.prices;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['imageUrl'] = imageUrl;
+    data['city'] = city;
+    data['country'] = country;
+    data['description'] = description;
+    data['rating'] = rating;
+    data['prices'] = prices;
     return data;
   }
 }
