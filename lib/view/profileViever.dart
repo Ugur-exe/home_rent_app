@@ -61,7 +61,10 @@ class _ProfileViewerState extends State<ProfileViewer> {
                 child: Text('OK'),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  await _uploadImage(pickedFile );
+                  setState(() async {
+                    await _uploadImage(PickedFile(pickedFile.path));
+                    _fetchProfileData();
+                  });
                 },
               ),
             ],
